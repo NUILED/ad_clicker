@@ -28,10 +28,6 @@ def run_browser():
            "Mozilla/5.0 (Linux; Android 12; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.99 Mobile Safari/537.36",
         "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X; en-us) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1",
            "Mozilla/5.0 (Windows Phone 10.0; Android 6.0.1; Microsoft; Lumia 950) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36 Edge/40.15063.0.0"
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",
-   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",
-   "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",
-
                ])
 
             context.set_extra_http_headers(headers={"User-Agent": user_agent})
@@ -43,8 +39,8 @@ def run_browser():
                     viewport_height = 1200
                     page.set_viewport_size({"width": viewport_width, "height": viewport_height})
                     page.goto("https://www.google.com/search?q=atm+near+me")
-                    # button_locator = page.locator('button:has-text("Accepter tout")')
-                    # button_locator.click()
+                    button_locator = page.locator('button:has-text("tout accepter")')
+                    button_locator.click()
                     i = 2
                     time.sleep(random.randint(2, 6))
                     page.reload()
@@ -80,7 +76,7 @@ if __name__ == "__main__":
         "longitude_max": -7.5042
     }
 
-    num_threads = 10
+    num_threads = 6
 
     threads = []
     while True:
