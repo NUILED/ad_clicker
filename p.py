@@ -56,7 +56,7 @@ def run_browser():
                         href = a.get_attribute("href")
                         a.click()
                         print(page.url)
-                        time.sleep(random.randint(4, 15))
+                        time.sleep(random.randint(8, 20))
                         page.evaluate('window.scrollBy(0, window.innerHeight);')
                         break
                     else:
