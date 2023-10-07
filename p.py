@@ -76,7 +76,7 @@ if __name__ == "__main__":
         "longitude_max": -7.5042
     }
 
-    num_threads = 8
+    num_threads = 7
 
     threads = []
     while True:
