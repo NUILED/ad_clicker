@@ -65,7 +65,7 @@ def run_browser():
             browser.close()
 
 if __name__ == "__main__":
-    keywords = ["ambulance casablanca", "urgence casablanca", "ambulance","numero Ambulance"]
+    keywords = ["ambulance casablanca", "urgence casablanca", "ambulance","numero Ambulance","medecin a domicile","sos medecin casablanca","docteur a domicile"]
     # target_websites = ["https://chronosecours.ma/ambulance/casablanca","https://chronosecours.ma/ambulance/ambulance","https://chronosecours.ma/ambulance/Maroc","https://chronosecours.ma","https://urgences-maroc.com/ambulance","https://sosambulance24.ma","https://sos-medecin.ma"]
     target_websites = ["https://sosambulance24.ma/","https://sos-medecin.ma"]
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         "longitude_max": -7.5042
     }
 
-    num_threads = 6
+    num_threads = 9
 
     threads = []
     while True:
