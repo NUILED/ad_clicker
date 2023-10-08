@@ -58,6 +58,7 @@ def run_browser():
                         print(page.url)
                         time.sleep(random.randint(8, 20))
                         page.evaluate('window.scrollBy(0, window.innerHeight);')
+                        break
                     else:
                         print("not clicked")
             context.close()
@@ -76,7 +77,7 @@ if __name__ == "__main__":
         "longitude_max": -7.5042
     }
 
-    num_threads = 7
+    num_threads = 10
 
     threads = []
     while True:
