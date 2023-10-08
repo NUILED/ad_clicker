@@ -4,6 +4,7 @@ import threading
 from playwright.sync_api import sync_playwright
 
 def run_browser():
+    while True:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless = True)
 
