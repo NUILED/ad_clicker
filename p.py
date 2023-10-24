@@ -40,8 +40,8 @@ def run_browser():
                     viewport_height = 1200
                     page.set_viewport_size({"width": viewport_width, "height": viewport_height})
                     page.goto("https://www.google.com/search?q=atm+near+me")
-                    #button_locator = page.locator('button:has-text("tout accepter")')
-                    #button_locator.click()
+                    button_locator = page.locator('button:has-text("tout accepter")')
+                    button_locator.click()
                     i = 2
                     time.sleep(random.randint(2, 6))
                     page.reload()
