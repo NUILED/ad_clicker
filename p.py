@@ -64,6 +64,7 @@ def run_browser():
                         else:
                     print("not clicked")
                 except:
+                    print("PROBLEMM")
                     continue
             context.close()
             browser.close()
