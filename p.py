@@ -35,33 +35,36 @@ def run_browser():
             page = context.new_page()
             i = 1
             for keyword in keywords:
-                if i == 1:
-                    viewport_width = 300
-                    viewport_height = 1200
-                    page.set_viewport_size({"width": viewport_width, "height": viewport_height})
-                    page.goto("https://www.google.com/search?q=atm+near+me")
-                    button_locator = page.locator('button:has-text("tout accepter")')
-                    button_locator.click()
-                    i = 2
-                    time.sleep(random.randint(2, 6))
-                    page.reload()
-                    time.sleep(random.randint(2, 4))
-                search_url = f"https://www.google.com/search?q={keyword}"
-                page.goto(search_url)
-                time.sleep(random.randint(3, 8))
-                # page.reload()
-                divs = page.query_selector_all("div[data-text-ad]")
-                for div in divs:
-                    a = div.query_selector("a")
-                    if a:
-                        href = a.get_attribute("href")
-                        a.click()
-                        print(page.url)
-                        time.sleep(random.randint(8, 20))
-                        page.evaluate('window.scrollBy(0, window.innerHeight);')
-                        break
-                    else:
-                        print("not clicked")
+                try:
+                    if i == 1:
+                        viewport_width = 300
+                        viewport_height = 1200
+                        page.set_viewport_size({"width": viewport_width, "height": viewport_height})
+                        page.goto("https://www.google.com/search?q=atm+near+me")
+                        button_locator = page.locator('button:has-text("tout accepter")')
+                        button_locator.click()
+                        i = 2
+                        time.sleep(random.randint(2, 6))
+                        page.reload()
+                        time.sleep(random.randint(2, 4))
+                    search_url = f"https://www.google.com/search?q={keyword}"
+                    page.goto(search_url)
+                    time.sleep(random.randint(3, 8))
+                    # page.reload()
+                    divs = page.query_selector_all("div[data-text-ad]")
+                    for div in divs:
+                        a = div.query_selector("a")
+                        if a:
+                            href = a.get_attribute("href")
+                            a.click()
+                            print(page.url)
+                            time.sleep(random.randint(8, 20))
+                            page.evaluate('window.scrollBy(0, window.innerHeight);')
+                            break
+                        else:
+                    print("not clicked")
+                except:
+                    continue
             context.close()
             browser.close()
 
