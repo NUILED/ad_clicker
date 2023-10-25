@@ -62,7 +62,7 @@ def run_browser():
                             page.evaluate('window.scrollBy(0, window.innerHeight);')
                             break
                         else:
-                    print("not clicked")
+                            print("not clicked")
                 except:
                     print("PROBLEMM")
                     continue
