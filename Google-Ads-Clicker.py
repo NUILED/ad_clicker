@@ -2,12 +2,25 @@ import random
 import time
 import threading
 from playwright.sync_api import sync_playwright
+import random
+import time
+import threading
+from playwright.sync_api import sync_playwright
 
-def run_browser():
+def read_proxies(file_path):
+    with open(file_path, 'r') as file:
+        proxies = file.read().splitlines()
+    return proxies
+
+def run_browser(proxy_list):
     while True:
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless = True)
+        proxy = random.choice(proxy_list)
+        proxy_parts = proxy.split(':')
+        proxy_address = proxy_parts[0]
+        proxy_port = int(proxy_parts[1])
 
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, proxy=f"http://{proxy_address}:{proxy_port}")
             context = browser.new_context(
                 geolocation={
                     "latitude": random.uniform(casablanca_bounds["latitude_min"], casablanca_bounds["latitude_max"]),
