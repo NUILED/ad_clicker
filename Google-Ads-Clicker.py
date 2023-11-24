@@ -14,9 +14,9 @@ def run_browser(proxy_list):
         proxy_parts = proxys.split(':')
         proxy_address = proxy_parts[0]
         proxy_port = int(proxy_parts[1])
-        print(proxy_port)
+#        print(proxy_port)
         with sync_playwright() as p:
-            browser = p.firefox.launch(headless=False)
+            browser = p.firefox.launch(headless=True)
             context = browser.new_context(
             proxy={
                 "server": f"http://{proxy_address}:{proxy_port}"
@@ -47,15 +47,16 @@ def run_browser(proxy_list):
             page = context.new_page()
             i = 1
             for keyword in keywords:
-                    if i == 1:
-                        viewport_width = 300
-                        viewport_height = 1200
-                        page.set_viewport_size({"width": viewport_width, "height": viewport_height})
-                        page.goto("https://www.google.com/search?q=atm+near+me")
-                        time.sleep(3)
-                        button_locator = page.locator('button:has-text("tout accepter")')
+                   # if i == 1:
+                    viewport_width = 300
+                    viewport_height = 1200
+                    page.set_viewport_size({"width": viewport_width, "height": viewport_height})
+                    page.goto("https://www.google.com/search?q=atm+near+me")
+                    page.wait_for_load_state("load")
+                    button_locator = page.locator('button:has-text("tout accepter")')
+                    if button_locator.is_enabled():
                         button_locator.click()
-                        i = 2
+                        #i = 2
                         time.sleep(random.randint(2, 6))
                         page.reload()
                         time.sleep(random.randint(2, 4))
@@ -69,7 +70,7 @@ def run_browser(proxy_list):
                         if a:
                             href = a.get_attribute("href")
                             print(href)
-                            if href == tar:
+                            if href == tar or href == var:
                                continue
                             a.click()
                             #print(page.url)
@@ -90,7 +91,8 @@ if __name__ == "__main__":
     #keywords = ["ambulance casablanca", "urgence casablanca", "ambulance","numero Ambulance","medecin a domicile","sos medecin casablanca","docteur a domicile"]
     keywords = ["medecin a domicile","sos medecin casablanca","docteur a domicile"]
     # target_websites = ["https://chronosecours.ma/ambulance/casablanca","https://chronosecours.ma/ambulance/ambulance","https://chronosecours.ma/ambulance/Maroc","https://chronosecours.ma","https://urgences-maroc.com/ambulance","https://sosambulance24.ma","https://sos-medecin.ma"]
-    tar = ["http://sosmedecinmaroc.com"]
+    tar = ["https://www.sosmedecinsmaroc.com/"]
+    var = ["https://www.sosmedecinsmaroc.ma/"]
 
     casablanca_bounds = {
         "latitude_min": 33.5174,
@@ -99,7 +101,7 @@ if __name__ == "__main__":
         "longitude_max": -7.5042
     }
 
-    num_threads = 20
+    num_threads = 25
 
     threads = []
     while True:
