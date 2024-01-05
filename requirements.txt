@@ -1,0 +1,5 @@
+recaptcha_challenger
+playwright
+requests
+playwright-stealth
+ffmpeg
