@@ -1,0 +1,57 @@
+import time
+from abc import ABC, abstractmethod
+from typing import Optional
+
+from stem import Signal
+from stem.control import Controller
+
+from .utility import Proxy
+
+class ProxyManager(ABC):
+    """
+    Abstract class for proxy managers
+
+    Proxy manager needed to switch proxies after each account creation
+    """
+
+    @abstractmethod
+    def get_next(self) -> Optional[Proxy]:
+        """
+        Get next proxy
+        """
+        ...
+
+class TorProxy(ProxyManager):
+    """Proxy manager based on Tor"""
+
+    def __init__(self, ip: str, port: int, password: str, control_port: int, delay: int = 5):
+        self.ip = ip
+        self.port = port
+        self.password = password
+        self.control_port = control_port
+        self.delay = delay
+
+        self.controller = Controller.from_port(port=self.control_port)
+        self.controller.authenticate(self.password)
+
+    @property
+    def proxy(self) -> Proxy:
+        return Proxy(self.ip, self.port)
+
+    def get_next(self):
+        time.sleep(self.delay)  # TODO: use smart delay based on timestamp
+        self.controller.signal(Signal.NEWNYM)
+
+        return self.proxy
+
+    def __str__(self) -> str:
+        return f'{self.ip}:{self.port}'
+
+
+class EmptyProxy(ProxyManager):
+    """In case if we want to use local IP address"""
+    def get_next(self):
+        return None
+
+    def __str__(self) -> str:
+        return 'No proxy'
