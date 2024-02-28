@@ -24,12 +24,12 @@ language = "fr-MA"
 keywords = ["medecin a domicile casablanca","medecin de nuit casablanca","sos medecin casablanca","docteur a domicile casablanca"]
 owners = "https://www.sosmedecinsmaroc.com/urgences"
 
+target = "https://medecin-a-domicile.ma/"
 target1 = "https://sos-medecin.ma/"
 target2 = "https://docteurcasablanca.ma/"
-target3 = "https://medecin-a-domicile.ma/"
-target4= "https://www.urgence-casablanca.ma/"
+target3= "https://www.urgence-casablanca.ma/"
 
- 
+
 casablanca_bounds = {
         "latitude_min": 33.5174,
         "latitude_max": 33.6362,
@@ -43,4 +43,4 @@ TOR_SOCKS5_PORT = 9050
 TOR_CONTROL_PORT = 9051
 TOR_PASSWORD = 'Passwort'
 TOR_DELAY = 5
-HEADLESS = False
+HEADLESS = True

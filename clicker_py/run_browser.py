@@ -1,109 +1,125 @@
 from playwright_recaptcha import recaptchav2
-from playwright.sync_api import sync_playwright, TimeoutError
+from playwright.async_api import async_playwright, TimeoutError
 import random
-from .exceptions import Captcha_not_solved
-from .utility import setup_proxy 
+from .exceptions import Captcha_not_solved 
 import time
 from . import config as configs
+from .utility import *
+import asyncio
 
-def captcha_solve(page):
-    with recaptchav2.AsyncSolver(page) as solver:
-        token = solver.solve_recaptcha(wait=True)
+target_texts = ["Acceptă tot", "Alles accepteren", "Alle akzeptieren", "Tout accepter", "Accept all","Godkänn alla"]
+
+async def captcha_solve(page):
+    async with recaptchav2.AsyncSolver(page) as solver:
+        token = await solver.solve_recaptcha(wait=True)
         if token:
-            print("solved")
+            print("Captcha solved")
         else:
             raise Captcha_not_solved
-def is_captcha_page(page):
 
-    # Check if the reCAPTCHA widget is present
-    return page.query_selector('.g-recaptcha') is not None
+async def is_captcha_page(page):
+    return await page.query_selector('.g-recaptcha') is not None
+
+async def click_button_with_text(page, content):
+    page_content = content
+    for target_text in target_texts:
+        if target_text in page_content:
+            print("Found button with text:", target_text)
+            button = await page.locator(f'button:has-text("{target_text}")').first()
+            await button.click()
+
+async def try_click(page, target1, target):
+    divs = await page.query_selector_all("div[data-text-ad]")
+    for div in divs:
+        try:
+            a = await div.query_selector("a")
+            href = await a.get_attribute("href")
+            print(href)
+        except:
+            print("No link found")
+        # You may uncomment the following lines if you want to click on the link
+        # if (href == target1) or (href == target):
+        try:
+            await a.click()
+        except Exception as e:
+            print(e)
+
+        await page.wait_for_load_state("load")
+        
+        if await is_captcha_page(page):
+            try:
+                await captcha_solve(page)
+            except Exception as e:
+                raise e
+        await asyncio.sleep(random.randint(8, 20))
+        await page.evaluate('window.scrollBy(0, window.innerHeight);')
 
 class BrowserHandler:
-    def __init__(self, proxy, language, keywords, z, v):
-        self.proxy = proxy
-        self.page = None
+    def __init__(self, language, keywords, z, v):
         self.language = language
         self.keywords = keywords
-        self.z = z
-        self.v = v
+    
+    async def firstopen(self, page):
+        await page.goto("https://www.whoer.net/")
+        await asyncio.sleep(random.randint(2, 5))
+        await page.wait_for_load_state("load")
+        await page.goto("https://www.google.com/search?q=atm+near+me")
+        await asyncio.sleep(random.randint(2, 5))
+        await page.wait_for_load_state("load")
+        if await is_captcha_page(page):
+            try:
+                await captcha_solve(page)
+            except Exception as e:
+                raise e
+        await asyncio.sleep(random.randint(2, 5))
+        content = await page.content()
+        await click_button_with_text(page,content)
+        await page.reload()
 
-    def firstopen(self):
-        self.page.goto("https://www.google.com/search?q=atm+near+me")
-        self.page.wait_for_load_state("load")
-        page_content = self.page.content()
-        if is_captcha_page(self.page):
-            captcha_solve(self.page)
-        target_texts = ["Acceptă tot", "Alles accepteren", "Alle akzeptieren", "Tout accepter", "Accept all","Godkänn alla"]
-        for target_text in target_texts:
-            if target_text in page_content:
-                print("Found button with text: " + target_text)
-                button =self.page.locator(f'button:has-text("{target_text}")')
-                button.click()
-        time.sleep(random.randint(3, 6))
-        self.page.reload()
-
-    def secondopen(self):
+    async def secondopen(self, page):
         for keyword in self.keywords:
             search_url = f"https://www.google.com/search?q={keyword}"
-            time.sleep(random.randint(3, 6))
-            self.page.wait_for_load_state("load")
-            if is_captcha_page(self.page):
-                    captcha_solve(self.page)
-            self.page.goto(search_url)
-            self.page.wait_for_load_state("load")
-            time.sleep(random.randint(3, 8))
-            divs = self.page.query_selector_all("div[data-text-ad]")
-            for div in divs:
+            await asyncio.sleep(random.randint(3, 6))
+            await page.wait_for_load_state("load")
+            if await is_captcha_page(page):
                 try:
-                    a = div.query_selector("a")
-                    href = a.get_attribute("href")
-                except:
-                    print("No link found")
-                if (href == self.z ) or (href == self.v):  # Corrected the condition
-                    print(href)
-                    try:
-                        a.click()
-                    except Exception as e:
-                        print(e)
-                    self.page.wait_for_load_state("load")
-                if is_captcha_page(self.page):
-                    captcha_solve(self.page)
-                time.sleep(random.randint(8, 20))
-                self.page.evaluate('window.scrollBy(0, window.innerHeight);')
+                    await captcha_solve(page)
+                except Exception as e:
+                    raise e
+            await page.goto(search_url)
+            await asyncio.sleep(random.randint(2, 5))
+            await page.wait_for_load_state("load")
+            divs = await page.query_selector_all("div[data-text-ad]")
+            try:
+                await try_click(page, configs.target , configs.target1)
+            except Exception as e:
+                raise e
 
-    def configure_browser_context(self, browser):
-        context = browser.new_context(
-        extra_http_headers = {"Accept-Language": configs.language},
-        proxy = setup_proxy(self.proxy),
-        geolocation={
-            "latitude": random.uniform(configs.casablanca_bounds["latitude_min"], configs.casablanca_bounds["latitude_max"]),
-            "longitude": random.uniform(configs.casablanca_bounds["longitude_min"], configs.casablanca_bounds["longitude_max"])
-        },
-        
-        permissions=["geolocation"]
-    )
+    async def configure_browser_context(self, browser):
+        context = await browser.new_context(
+            extra_http_headers = {"Accept-Language": configs.language},
+            geolocation={
+                "latitude": random.uniform(configs.casablanca_bounds["latitude_min"], configs.casablanca_bounds["latitude_max"]),
+                "longitude": random.uniform(configs.casablanca_bounds["longitude_min"], configs.casablanca_bounds["longitude_max"])
+            },
+            permissions=["geolocation"]
+        )
         user_agent = random.choice(configs.Agent)
-        context.route("**/tel/*", lambda route: route.continue_())
-        context.set_extra_http_headers(headers={"User-Agent": user_agent}) #we will try to use playwright devices to make us memaking mobile phones
+        await context.route("**/tel/*", lambda route: route.continue_())
+        await context.set_extra_http_headers(headers={"User-Agent": user_agent})
         return context
 
-    def run_browser(self):
-        time.sleep(random.randint(2, 6))
-        i = 1
-        with sync_playwright() as p:
-
-            browser = p.firefox.launch(headless=configs.HEADLESS)
-            context = self.configure_browser_context(browser)
-            page = context.new_page()
-            self.page = page
+    async def run_browser(self):
+        await asyncio.sleep(random.randint(2, 6))
+        async with async_playwright() as p:
+            browser = await p.chromium.launch(headless=configs.HEADLESS,proxy={"server": f"socks5://id:{configs.TOR_PASSWORD}@{configs.TOR_IP}:{configs.TOR_SOCKS5_PORT}"})
+            context = await self.configure_browser_context(browser)
+            page = await context.new_page()
+            await page.set_viewport_size({"width": 300, "height": 900})
             try:
-                if i == 1:  #if you want to run it multiple time;
-                    self.firstopen()
-                    i = 2
-                if is_captcha_page(page):
-                    captcha_solve(self.page)
-                self.secondopen()
-            except TimeoutError:
-                print("TimeoutError")
-            context.close()
-            browser.close()
+                await self.firstopen(page)
+                await self.secondopen(page)
+            except Exception as e:
+                print(e)
+            await context.close()
+            await browser.close()

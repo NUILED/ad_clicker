@@ -1,8 +1,9 @@
-from typing import Optional, Dict, Tuple, Union
+from typing import Optional, Dict, Tuple
 from dataclasses import dataclass
 from . import exceptions
 
 import requests
+
 @dataclass
 class  Proxy:
     """
@@ -90,7 +91,7 @@ def load_proxies(path: str) -> list[str]:
 
 def check_tor_running(ip: str, port: int) -> bool:
     try:
-        r = requests.get('https://check.torproject.org/api/ip', proxies={'https': f'socks5h://{ip}:{port}'}, timeout=5)
+        r = requests.get('https://check.torproject.org/api/ip', proxies={'https': f'socks5://{ip}:{port}'}, timeout=5)
         return r.json()['IsTor'] is True
     except Exception:
         return False

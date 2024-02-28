@@ -1,5 +1,5 @@
-recaptcha_challenger
+Captcha_not_solved
 playwright
 requests
-playwright-stealth
 ffmpeg
+stem
