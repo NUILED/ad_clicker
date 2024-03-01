@@ -39,7 +39,7 @@ class TorProxy(ProxyManager):
     def establish_exit_node_circuit(self):
         try:
             # Get a list of available exit nodes
-            exit_nodes = [desc.fingerprint for desc in self.controller.get_network_statuses() if 'Exit' in desc.flags]
+            exit_nodes = [desc.fingerprint for desc in self.controller.get_network_statuses() if 'Exit' in desc.flags] # we try to reduce nodes bettwing my request and exit node to make more speed and prevent loading error 
             if exit_nodes:
                 # Configure a circuit using the exit node as the only hop
                 circuit_id = self.controller.new_circuit(path=[exit_nodes[0]], await_build=True)

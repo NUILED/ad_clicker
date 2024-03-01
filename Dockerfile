@@ -14,15 +14,16 @@ RUN apt-get update && apt-get install -y libnss3 \
                 libgbm1 \ 
                 wget \
                 gnupg \
-                ffmpeg
-
-RUN rm -rf /var/lib/apt/lists/*
+                ffmpeg \
+                python3 \
+                pip
 
 # upgrade pip
 RUN python -m pip install --no-cache-dir --upgrade pip
 
 # install dependencies
-COPY ./requirements.txt pythonapp.py script.sh /src
+COPY ./* /GCADS
+
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # Copy the current directory contents into the image
@@ -30,7 +31,9 @@ COPY . /src
 
 # set display port to avoid crash
 ENV DISPLAY=:99
+
 RUN chmod +x /src/script.sh
+
 # Start Xvfb
 CMD Xvfb :99 -screen 0 1920x1080x16
 
