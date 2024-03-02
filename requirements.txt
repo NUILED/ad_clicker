@@ -1,5 +1,8 @@
-Captcha_not_solved
 playwright
 requests
 ffmpeg
 stem
+pydub
+SpeechRecognition
+playwright_stealth
+timeout-decorator
