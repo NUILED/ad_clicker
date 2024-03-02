@@ -1,7 +1,7 @@
 FROM python:3.10-slim-buster
 
 # Set the working directory to /src
-WORKDIR /src
+WORKDIR /GCADS
 # install required packages
 
 RUN apt-get update && apt-get install -y libnss3 \
@@ -16,19 +16,20 @@ RUN apt-get update && apt-get install -y libnss3 \
                 gnupg \
                 ffmpeg \
                 python3 \
-                pip
+                pip \
+                tor 
 
 # upgrade pip
 RUN python -m pip install --no-cache-dir --upgrade pip
 
-# install dependencies
+# Copy the current directory contents into the image
 COPY ./* /GCADS
 
-RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN python -m venv env
 
-# Copy the current directory contents into the image
-COPY . /src
+RUN source env/bin/activate
 
+RUN python -m pip install -r requirements.txt
 # set display port to avoid crash
 ENV DISPLAY=:99
 
@@ -37,5 +38,4 @@ RUN chmod +x /src/script.sh
 # Start Xvfb
 CMD Xvfb :99 -screen 0 1920x1080x16
 
-ENTRYPOINT ["./script.sh"]
-
+ENTRYPOINT ["./install.sh"]

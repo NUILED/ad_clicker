@@ -1,7 +1,5 @@
 from typing import Optional, Dict, Tuple
 from dataclasses import dataclass
-from . import exceptions
-
 import requests
 
 @dataclass

@@ -1,7 +1,5 @@
-from playwright_stealth import stealth_sync
 from playwright.sync_api import sync_playwright, TimeoutError
 import random
-from .exceptions import Captcha_not_solved 
 import time
 from . import config as configs
 from .utility import *
@@ -94,19 +92,17 @@ class BrowserHandler:
                     captcha_solve(page)
                 except Exception as e:
                     raise e
-            page.goto(search_url)
             time.sleep(0.5)
+            time.sleep(0.5)
+            page.goto(search_url)
             page.once("load", lambda: print("page loaded!"))
-            divs = page.query_selector_all("div[data-text-ad]")
             try:
                 self.try_click(page,configs.target , configs.target1)
             except Exception as e:
-                raise e
+                print(e)
 
     def configure_browser_context(self, browser):
         context = browser.new_context(
-            record_video_dir="videos/",#for captcha
-            record_video_size={"width": 640, "height": 480},#for captcha
             extra_http_headers = {"Accept-Language": configs.language},
             geolocation={
                 "latitude": random.uniform(configs.casablanca_bounds["latitude_min"], configs.casablanca_bounds["latitude_max"]),
@@ -124,7 +120,6 @@ class BrowserHandler:
             browser = p.chromium.launch(headless=configs.HEADLESS,proxy={"server": f"socks5://id:{configs.TOR_PASSWORD}@{configs.TOR_IP}:{configs.TOR_SOCKS5_PORT}"})
             context = self.configure_browser_context(browser)
             page = context.new_page()
-            stealth_sync(page) #for captcha
             page.set_viewport_size({"width": 300, "height": 900})
             try:
                 self.firstopen(page)
