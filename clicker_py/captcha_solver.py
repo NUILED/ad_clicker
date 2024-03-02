@@ -10,7 +10,7 @@ class SolveCaptcha:
         self.recaptcha = None
 
     def delay(self):
-        self.page.wait_for_timeout(random.randint(1, 3)*1000)
+        self.page.wait_for_timeout(random.randint(1, 3) * 1000)
 
     def presetup(self):
         name = self.page.locator(
@@ -35,14 +35,11 @@ class SolveCaptcha:
                 self.solve_captcha()
             except Exception as e:
                 print(e)
-                if e == "Timeout 30000ms exceeded":
-                    self.page.reload()
-                    tries+= 2
                 self.main_frame.click("id=recaptcha-reload-button")
             else:
                 s = self.recaptcha.locator("//span[@id='recaptcha-anchor']")
                 if s.get_attribute("aria-checked") != "false":
-                    #self.page.click("id=recaptcha-demo-submit")
+                    self.page.click("id=recaptcha-demo-submit")
                     self.delay()
                     break
             tries += 1

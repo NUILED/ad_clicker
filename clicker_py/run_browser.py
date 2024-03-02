@@ -6,14 +6,16 @@ import time
 from . import config as configs
 from .utility import *
 from .captcha_solver import *
+from playwright_recaptcha import recaptchav2
+
 
 target_texts = ["Acceptă tot", "Alles accepteren", "Alle akzeptieren", "Avvis alle", "Tout accepter", "Accept all","Godkänn alla"]
 
 def captcha_solve(page):
     try:
-        captcha_solver = SolveCaptcha(page)
-        captcha_solver.start()
-        del captcha_solver
+        with recaptchav2.SyncSolver(page) as solver:
+            token = solver.solve_recaptcha(wait=True)
+            print(token)
     except Exception as e:
         raise e
 
@@ -22,12 +24,13 @@ def is_captcha_page(page):
 
 
 class BrowserHandler:
+
     def __init__(self, language, keywords, z, v):
         self.language = language
         self.keywords = keywords
         self.page = None
+
     def Click_ACC(self, page):
-            page.goto("https://www.google.com/search?q=atm+near+me")
             page.wait_for_load_state('load')
             page_content = page.content()
             for target_text in target_texts:
