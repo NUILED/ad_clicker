@@ -44,23 +44,12 @@ class BrowserHandler:
                 a = div.query_selector("a")
                 href = a.get_attribute("href")
                 print(href)
+                a.click()
             except Exception as e:
                 print("No link found") 
                 raise e
             # You may uncomment the following lines if you want to click on the link
             # if (href == target1) or (href == target):
-            try:
-                a.click()
-            except Exception as e:
-                raise e
-
-            page.once("load", lambda: print("page loaded!"))
-            
-            if is_captcha_page(page):
-                try:
-                    captcha_solve(page)
-                except Exception as e:
-                    raise e
             time.sleep(random.randint(7, 10))
             page.evaluate('window.scrollBy(0, window.innerHeight);')
     
@@ -87,12 +76,6 @@ class BrowserHandler:
             search_url = f"https://www.google.com/search?q={keyword}"
             time.sleep(0.5)
             page.once("load", lambda: print("page loaded!"))
-            if is_captcha_page(page):
-                try:
-                    captcha_solve(page)
-                except Exception as e:
-                    raise e
-            time.sleep(0.5)
             time.sleep(0.5)
             page.goto(search_url)
             page.once("load", lambda: print("page loaded!"))
